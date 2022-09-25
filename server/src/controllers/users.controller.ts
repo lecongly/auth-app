@@ -122,5 +122,21 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  forgotPassword: async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const user = await Users.findOne({ email });
+      if (!user)
+        return res.status(400).json({ msg: "This email does not exist." });
+
+      const access_token = createAccessToken({ id: user._id });
+      const url = `${CLIENT_URL}/user/reset/${access_token}`;
+
+      sendMail(email, url, "Reset your password");
+      res.json({ msg: "Re-send the password, please check your email." });
+    } catch (err: any) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 export default userController;
