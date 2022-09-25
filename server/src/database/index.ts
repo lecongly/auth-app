@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { MONGODB_URL } from "../config";
 
 // Configure NodeJS App Environment Variables
 dotenv.config({ path: ".env" });
 
-const MONGODB_URL =
-  process.env.MONGODB_URL || "mongodb://localhost:27017/auth-app";
 const db = mongoose.connect(MONGODB_URL);
 
 // CONNECTION EVENTS

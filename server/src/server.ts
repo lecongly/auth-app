@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import db from "./database";
+import apiRoute from "./routes";
 
 // Configure NodeJS App Environment Variables
 dotenv.config({ path: ".env" });
@@ -22,6 +23,9 @@ app.use(
     credentials: true,
   })
 );
+
+// Server Routes
+app.use("/api", apiRoute);
 
 // Listen To Api Express Server
 const PORT = process.env.EXPRESS_PORT || 5000;
