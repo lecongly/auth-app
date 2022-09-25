@@ -3,11 +3,19 @@ import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 
 import { validateEmail } from "../validations";
-import { createActivationToken, createRefreshToken } from "../services/jwt";
+import {
+  createAccessToken,
+  createActivationToken,
+  createRefreshToken,
+} from "../services/jwt";
 import sendMail from "../services/sendMail";
 
 import Users from "../models/users.model";
-import { ACTIVATION_TOKEN_SECRET, CLIENT_URL } from "../config";
+import {
+  ACTIVATION_TOKEN_SECRET,
+  CLIENT_URL,
+  REFRESH_TOKEN_SECRET,
+} from "../config";
 import { UserJwtPayload } from "../types/jwt.type";
 
 const userController = {
@@ -95,6 +103,21 @@ const userController = {
       });
 
       res.json({ msg: "Login success!" });
+    } catch (err: any) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getAccessToken: (req: Request, res: Response) => {
+    try {
+      const rf_token = req.cookies.refreshtoken;
+      if (!rf_token) return res.status(400).json({ msg: "Please login now!" });
+      jwt.verify(rf_token, REFRESH_TOKEN_SECRET, (err: any, user: any) => {
+        if (err) {
+          return res.status(400).json({ msg: "Please login now!" });
+        }
+        const access_token = createAccessToken({ id: user.id });
+        res.json({ access_token });
+      });
     } catch (err: any) {
       return res.status(500).json({ msg: err.message });
     }

@@ -3,6 +3,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import db from "./database";
 import apiRoute from "./routes";
@@ -23,6 +24,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 
 // Server Routes
 app.use("/api", apiRoute);
