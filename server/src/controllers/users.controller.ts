@@ -179,5 +179,17 @@ const userController = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  updateUser: async (req: Request, res: Response) => {
+    try {
+      const { name, avatar } = req.body;
+      await Users.findOneAndUpdate(
+        { _id: (<any>req).user.id },
+        { name, avatar }
+      );
+      res.json({ msg: "Update Success!" });
+    } catch (err: any) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 export default userController;

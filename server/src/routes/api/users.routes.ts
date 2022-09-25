@@ -13,5 +13,6 @@ route.post("/reset", auth, usersController.resetPassword);
 route.get("/infor", auth, usersController.getUserInfor);
 route.get("/all_infor", auth, authAdmin, usersController.getUsersAllInfor);
 route.get("/logout", auth, usersController.logout);
+route.patch("/update", auth, usersController.updateUser);
 
 export default route;
