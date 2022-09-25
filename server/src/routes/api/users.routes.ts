@@ -14,5 +14,12 @@ route.get("/infor", auth, usersController.getUserInfor);
 route.get("/all_infor", auth, authAdmin, usersController.getUsersAllInfor);
 route.get("/logout", auth, usersController.logout);
 route.patch("/update", auth, usersController.updateUser);
+route.patch(
+  "/update_role/:id",
+  auth,
+  authAdmin,
+  usersController.updateUsersRole
+);
+route.delete("/delete/:id", auth, authAdmin, usersController.deleteUser);
 
 export default route;
