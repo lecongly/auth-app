@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 
 import { validateEmail } from "../validations";
-import { createActivationToken } from "../services/jwt";
+import { createActivationToken, createRefreshToken } from "../services/jwt";
 import sendMail from "../services/sendMail";
 
 import Users from "../models/users.model";
@@ -68,6 +68,33 @@ const userController = {
       await newUser.save();
 
       res.json({ msg: "Account has been activated!" });
+    } catch (err: any) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  login: async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    try {
+      const user = await Users.findOne({ email });
+      if (!user)
+        return res
+          .status(400)
+          .json({ msg: "The email/password you entered is incorrect." });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return res
+          .status(400)
+          .json({ msg: "The email/password you entered is incorrect." });
+
+      const refresh_token = createRefreshToken({ id: user._id });
+      res.cookie("refreshtoken", refresh_token, {
+        httpOnly: true,
+        path: "/api/users/refresh_token",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
+      res.json({ msg: "Login success!" });
     } catch (err: any) {
       return res.status(500).json({ msg: err.message });
     }
