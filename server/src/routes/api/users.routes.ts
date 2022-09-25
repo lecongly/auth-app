@@ -12,5 +12,6 @@ route.post("/forgot", usersController.forgotPassword);
 route.post("/reset", auth, usersController.resetPassword);
 route.get("/infor", auth, usersController.getUserInfor);
 route.get("/all_infor", auth, authAdmin, usersController.getUsersAllInfor);
+route.get("/logout", auth, usersController.logout);
 
 export default route;
