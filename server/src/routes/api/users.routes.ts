@@ -10,5 +10,6 @@ route.post("/login", usersController.login);
 route.post("/refresh_token", usersController.getAccessToken);
 route.post("/forgot", usersController.forgotPassword);
 route.post("/reset", auth, usersController.resetPassword);
+route.get("/infor", auth, usersController.getUserInfor);
 
 export default route;
