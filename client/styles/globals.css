@@ -2,8 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  header {
+    @apply fixed top-0 z-50  w-full items-center px-4 py-4 transition-all lg:px-10 lg:py-6;
+  }
+}
 @layer components {
   .btn-primary {
-    @apply py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
+    @apply rounded-full px-10 py-2.5 inline-block font-semibold border-2 border-blue-500 bg-blue-500 text-white hover:bg-white hover:text-blue-500 cursor-pointer;
+  }
+  .headerLink {
+    @apply p-2 cursor-pointer text-base font-light text-[#000000] transition duration-[.4s] hover:text-[#626262];
+  }
+  .headerLink.active {
+    @apply border-b-2 border-black;
   }
 }
