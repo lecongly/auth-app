@@ -1,7 +1,10 @@
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Notification from "../../../components/Notification";
+import { ResetPass } from "../../../services/user.service";
+import { isLength, isMatch } from "../../../utils/validation";
 const initialState = {
   password: "",
   cf_password: "",
@@ -22,8 +25,39 @@ const ResetPassword = () => {
     setData({ ...data, [name]: value, err: "", success: "" });
   };
 
+  const handleResetPass = async (e: any) => {
+    e.preventDefault();
+    if (isLength(password))
+      return setData({
+        ...data,
+        err: "Password must be at least 6 characters.",
+        success: "",
+      });
+
+    if (!isMatch(password, cf_password))
+      return setData({
+        ...data,
+        err: "Password did not match.",
+        success: "",
+      });
+
+    try {
+      const data = await ResetPass(token, password);
+      return setData({ ...data, err: "", success: data.msg });
+    } catch (err: any) {
+      setData({
+        ...data,
+        err: err.response.data.msg || "Something is error",
+        success: "",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <Head>
+        <title>Reset Password</title>
+      </Head>
       {success ? (
         <div className="flex flex-col items-center justify-center">
           <Notification success={success} />
@@ -38,7 +72,7 @@ const ResetPassword = () => {
           </h2>
           <Notification err={err} />
           <form
-            // onSubmit={handleResetPass}
+            onSubmit={handleResetPass}
             className="flex flex-col w-1/2 items-center"
           >
             <label htmlFor="password" className="my-2">

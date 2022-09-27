@@ -1,7 +1,41 @@
+import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  loggedIn,
+  loginUser,
+  userInfoByRefToken,
+} from "../redux/user/auth.slice";
+import { getToken, myToken } from "../redux/user/token.slice";
+import { UserInfoByToken } from "../services/user.service";
 
 const Home: NextPage = () => {
+  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector<boolean>(loggedIn);
+  const token = useAppSelector(myToken);
+
+  useEffect(() => {
+    const firstLogin = localStorage.getItem("login");
+    if (firstLogin) {
+      const getTokenFromServer = async () => {
+        const res = await axios.post("/api/users/refresh_token");
+        dispatch(getToken(res.data.access_token));
+      };
+      getTokenFromServer();
+    }
+  }, [isLoggedIn, dispatch]);
+  useEffect(() => {
+    if (token) {
+      const getUser = async () => {
+        dispatch(loginUser());
+        const user = await UserInfoByToken(token);
+        dispatch(userInfoByRefToken(user));
+      };
+      getUser();
+    }
+  }, [token, dispatch]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>

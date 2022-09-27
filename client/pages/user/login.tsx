@@ -1,5 +1,7 @@
+import axios from "axios";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 // import icons
@@ -9,6 +11,9 @@ import { MdLockOutline } from "react-icons/md";
 import Notification from "../../components/Notification";
 import SocialLogin from "../../components/SocialLogin";
 import { ILogin } from "../../models/auth.model";
+import { useAppDispatch } from "../../redux/hooks";
+import { loginUser } from "../../redux/user/auth.slice";
+import { UserLogin } from "../../services/user.service";
 
 type Props = {};
 
@@ -24,9 +29,29 @@ const Login = (props: Props) => {
   const [user, setUser] = useState(initialState);
   const { email, password, err, success } = user;
 
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const handleChangeInput = (e: any) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value, err: "", success: "" });
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      const data = await UserLogin(email, password);
+      setUser({ ...user, err: "", success: data.msg });
+      localStorage.setItem("login", "true");
+      dispatch(loginUser());
+      router.push("/");
+    } catch (err: any) {
+      setUser({
+        ...user,
+        err: err.response.data.msg || "Something is error",
+        success: "",
+      });
+    }
   };
 
   return (
@@ -49,37 +74,43 @@ const Login = (props: Props) => {
               <p className="text-gray-400">or use your email account</p>
               <Notification err={err} success={success} />
               <form
-                // onSubmit={handleSubmit}
+                onSubmit={handleSubmit}
                 className="flex flex-col items-center"
               >
-                <div className="bg-gray-100 w-96 p-2 flex items-center">
-                  <FaRegEnvelope className="text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Email"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={email}
-                    name="email"
-                    onChange={handleChangeInput}
-                  />
-                </div>
-                <div className="bg-gray-100 w-96 p-2 flex items-center">
-                  <MdLockOutline className="text-gray-400 mr-2" />
-                  <input
-                    type={`${isShowPassword ? "text" : "password"}`}
-                    placeholder="Password"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={password}
-                    name="password"
-                    onChange={handleChangeInput}
-                  />
-                  <div
-                    onClick={() => {
-                      setIsShowPassword(!isShowPassword);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    {isShowPassword ? <BiHide /> : <BiShowAlt />}
+                <div
+                  className={`mb-2.5 rounded-xl overflow-hidden border ${
+                    err ? "border-red-500" : " "
+                  }`}
+                >
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <FaRegEnvelope className="text-gray-400 mr-2" />
+                    <input
+                      type="text"
+                      placeholder="Email"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={email}
+                      name="email"
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <MdLockOutline className="text-gray-400 mr-2" />
+                    <input
+                      type={`${isShowPassword ? "text" : "password"}`}
+                      placeholder="Password"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={password}
+                      name="password"
+                      onChange={handleChangeInput}
+                    />
+                    <div
+                      onClick={() => {
+                        setIsShowPassword(!isShowPassword);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {isShowPassword ? <BiHide /> : <BiShowAlt />}
+                    </div>
                   </div>
                 </div>
                 <div className="flex justify-between w-96 mb-5 mt-2">

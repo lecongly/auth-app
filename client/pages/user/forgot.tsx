@@ -2,6 +2,8 @@ import Head from "next/head";
 import { useState } from "react";
 import { BiMailSend } from "react-icons/bi";
 import Notification from "../../components/Notification";
+import { ForgotPassword } from "../../services/user.service";
+import { isEmail } from "../../utils/validation";
 
 const initialState = {
   email: "",
@@ -18,6 +20,21 @@ const Forgot = () => {
     setData({ ...data, [name]: value, err: "", success: "" });
   };
 
+  const forgotPassword = async (e: any) => {
+    e.preventDefault();
+    if (!isEmail(email))
+      return setData({ ...data, err: "Invalid emails.", success: "" });
+    try {
+      const data = await ForgotPassword(email);
+      return setData({ ...data, err: "", success: data.msg });
+    } catch (err: any) {
+      setData({
+        ...data,
+        err: err.response.data.msg || "Something is error",
+        success: "",
+      });
+    }
+  };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
@@ -34,7 +51,7 @@ const Forgot = () => {
             Forgot Your Password?
           </h2>
           <form
-            // onSubmit={forgotPassword}
+            onSubmit={forgotPassword}
             className="flex flex-col w-1/2 items-center"
           >
             <label htmlFor="email" className="mb-5">

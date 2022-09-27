@@ -14,6 +14,8 @@ import Notification from "../../components/Notification";
 
 import SocialLogin from "../../components/SocialLogin";
 import { IRegister } from "../../models/auth.model";
+import { UserRegister } from "../../services/user.service";
+import { isEmail, isEmpty, isLength, isMatch } from "../../utils/validation";
 
 const initialState: IRegister = {
   name: "",
@@ -34,6 +36,40 @@ const Register = () => {
     setUser({ ...user, [name]: value, err: "", success: "" });
   };
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (isEmpty(name) || isEmpty(password))
+      return setUser({
+        ...user,
+        err: "Please fill in all fields.",
+        success: "",
+      });
+
+    if (!isEmail(email))
+      return setUser({ ...user, err: "Invalid emails.", success: "" });
+
+    if (isLength(password))
+      return setUser({
+        ...user,
+        err: "Password must be at least 6 characters.",
+        success: "",
+      });
+
+    if (!isMatch(password, cf_password))
+      return setUser({ ...user, err: "Password did not match.", success: "" });
+
+    try {
+      const data = await UserRegister(name, email, password);
+      setUser({ ...user, err: "", success: data.msg });
+    } catch (err: any) {
+      setUser({
+        ...user,
+        err: err.response.data.msg || "Something is error",
+        success: "",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
@@ -50,63 +86,73 @@ const Register = () => {
               <div className="border-2 w-10 border-primary inline-block mb-2"></div>
               <Notification err={err} success={success} />
               <form
-                // onSubmit={handleSubmit}
+                onSubmit={handleSubmit}
                 className="flex flex-col items-center"
               >
-                <div className="bg-gray-100 w-96 p-2 flex items-center">
-                  <BiUserCircle className="text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={name}
-                    name="name"
-                    onChange={handleChangeInput}
-                  />
-                </div>
-                <div className="bg-gray-100 w-96 p-2 flex items-center">
-                  <FaRegEnvelope className="text-gray-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Email"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={email}
-                    name="email"
-                    onChange={handleChangeInput}
-                  />
-                </div>
-                <div className="bg-gray-100 w-96 p-2 flex items-center">
-                  <MdLockOutline className="text-gray-400 mr-2" />
-                  <input
-                    type={`${isShowPassword ? "text" : "password"}`}
-                    placeholder="Password"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={password}
-                    name="password"
-                    onChange={handleChangeInput}
-                  />
-                  <div
-                    onClick={() => {
-                      setIsShowPassword(!isShowPassword);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    {isShowPassword ? <BiHide /> : <BiShowAlt />}
+                <div
+                  className={`mb-2.5 rounded-xl overflow-hidden border ${
+                    err ? "border-red-500" : " "
+                  }`}
+                >
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <BiUserCircle className="text-gray-400 mr-2" />
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={name}
+                      name="name"
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <FaRegEnvelope className="text-gray-400 mr-2" />
+                    <input
+                      type="text"
+                      placeholder="Email"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={email}
+                      name="email"
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <MdLockOutline className="text-gray-400 mr-2" />
+                    <input
+                      type={`${isShowPassword ? "text" : "password"}`}
+                      placeholder="Password"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={password}
+                      name="password"
+                      onChange={handleChangeInput}
+                    />
+                    <div
+                      onClick={() => {
+                        setIsShowPassword(!isShowPassword);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {isShowPassword ? <BiHide /> : <BiShowAlt />}
+                    </div>
+                  </div>
+                  <div className="bg-gray-100 w-96 p-2.5 flex items-center">
+                    <MdLockOutline className="text-gray-400 mr-2" />
+                    <input
+                      type="password"
+                      placeholder="Confirm password"
+                      className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
+                      value={cf_password}
+                      name="cf_password"
+                      onChange={handleChangeInput}
+                    />
                   </div>
                 </div>
-                <div className="bg-gray-100 w-96 p-2 mb-2 flex items-center">
-                  <MdLockOutline className="text-gray-400 mr-2" />
-                  <input
-                    type="password"
-                    placeholder="Confirm password"
-                    className="bg-gray-100 outline-none text-sm text-gray-500 flex-1"
-                    value={cf_password}
-                    name="cf_password"
-                    onChange={handleChangeInput}
-                  />
-                </div>
 
-                <button type="submit" className="btn-primary">
+                <button
+                  type="submit"
+                  disabled={success ? true : false}
+                  className={success ? "btn-disabled" : "btn-primary"}
+                >
                   Sign Up
                 </button>
               </form>
