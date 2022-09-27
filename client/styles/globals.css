@@ -9,7 +9,10 @@
 }
 @layer components {
   .btn-primary {
-    @apply rounded-full px-10 py-2.5 inline-block font-semibold border-2 border-blue-500 bg-blue-500 text-white hover:bg-white hover:text-blue-500 cursor-pointer;
+    @apply rounded-full px-10 py-2.5 inline-block font-semibold border-2 border-primary bg-primary text-white hover:bg-white hover:text-primary cursor-pointer;
+  }
+  .btn-primary-reverse {
+    @apply rounded-full px-10 py-2.5 inline-block font-semibold border-2 border-white bg-primary text-white hover:bg-white hover:text-primary cursor-pointer;
   }
   .headerLink {
     @apply p-2 cursor-pointer text-base font-light text-[#000000] transition duration-[.4s] hover:text-[#626262];
