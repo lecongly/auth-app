@@ -17,8 +17,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       const res = await Logout(token);
-      console.log(res);
-      localStorage.removeItem("firstLogin");
+      localStorage.removeItem("login");
       dispatch(logoutUser());
       dispatch(removeToken());
       router.push("/");
