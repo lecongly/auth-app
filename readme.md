@@ -3,6 +3,8 @@
 This project consists of a client built with Next.js and a server built with Express,
 both using basic authentication for user login
 
+<img width="1440" alt="Screen Shot 2022-12-21 at 9 26 57 PM" src="https://user-images.githubusercontent.com/58856636/208930088-1bbc01c8-bd71-4915-b19b-8b7819f95014.png">
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
