@@ -9,7 +9,7 @@ import { store } from "../redux/store";
 import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  axios.defaults.baseURL = "http://localhost:5000";
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
   axios.defaults.withCredentials = true;
 
   NProgress.configure({ showSpinner: false });
