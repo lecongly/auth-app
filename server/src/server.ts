@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use("/api", apiRoute);
 
 // Listen To Api Express Server
-const PORT = process.env.EXPRESS_PORT || 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server started on port: ${PORT}`);
 
